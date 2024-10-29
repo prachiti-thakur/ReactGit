@@ -60,8 +60,8 @@ export default function App() {
 const [movies, setMovies] = useState(tempMovieData);
 const [watched, setWatched] = useState(tempWatchedData);
 
-// const [isOpen1, setIsOpen1] = useState(true);
-// const [isOpen2, setIsOpen2] = useState(true);
+// 
+
  
   return (
     <>
@@ -79,13 +79,22 @@ const [watched, setWatched] = useState(tempWatchedData);
      <MovieList movies={movies}/>
     </Box>
 
+    {/* <Box element={<MovieList movies={movies}/>}/> */}
+
     <Box>
     <WatchSummery watched={watched}/>
        
        <WatchedMovieList watched={watched}/>
     </Box>
 
-     </Main>
+    {/* <Box element={<>
+      <WatchSummery watched={watched}/>
+       
+       <WatchedMovieList watched={watched}/>
+      </>}
+    /> */}
+
+    </Main>
       
     </>
   );
@@ -155,6 +164,7 @@ function Main({children}){
 }
 
 //////////////////////////////////////////////////////////////
+//resusable component
 function Box({children}){
   
   const [isOpen, setIsOpen] = useState(true);
@@ -311,5 +321,5 @@ function WatchedMovie({movie}){
 
 ///////////////////////////////////////////////////////////////////
 
-//resusable component
+
 
