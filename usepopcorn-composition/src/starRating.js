@@ -1,4 +1,6 @@
 import { useState } from "react";
+import propTypes from  "prop-types"
+import PropTypes from "prop-types";
 
 // style objects
 const containerStyle={
@@ -11,6 +13,17 @@ const starContainerStyle={
     display:"flex",
     gap:"4px",
 };
+
+
+StarRating.propTypes={
+    maxRating:PropTypes.number,
+    defaultRating:PropTypes.number,
+    color:PropTypes.string,
+    size:PropTypes.number,
+    messages:PropTypes.array,
+    className:PropTypes.string,
+    onset:PropTypes.func,
+}
 
 
 // her we are pasing the default
@@ -41,6 +54,8 @@ const textStyle={
     fontSize:`${size/1.5}px`
     
 }
+
+
 
  
     return (
