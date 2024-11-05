@@ -95,16 +95,21 @@ function handleDeleteWatched(id){
   setWatched((watched)=> watched.filter((movie)=>
   movie.imdbID !== id));
 }
+///////////////////////////////////
+
 
 // 
 useEffect(function(){
+  //for abort controller
+
+  const controller =new AbortController();
 
   async function fetchMovies (){
     
     try{
       setIsLoading(true);
       setError('')
-     const res =await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${key}&s=${query}`);
+     const res =await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${key}&s=${query}`,{signal:controller.signal});
 
 
     if (!res.ok) throw new Error("Something went Wrong")
@@ -120,7 +125,9 @@ useEffect(function(){
     }
     catch(err){
       console.error(err);
-      setError(err.message);
+      if(err.name !== "AbortError"){
+        setError(err.message);
+      }
 
     }
     finally{
@@ -134,10 +141,19 @@ useEffect(function(){
     return;
   }
 
+
+  handleCloseMovie();
   fetchMovies();
+  //cleanup function
+
+  return function(){
+    controller.abort();
+  }
 
 },[query]);
 
+
+/////////////////////////////////////////////
  
   return (
     <>
@@ -482,6 +498,34 @@ function SelectedMovie({selectedId,oncloseMovie,onAddWatched,watched}){
 
   }
 
+  /////////////////////////////////////////////////////////////
+
+
+
+    useEffect(function(){
+        function callback(e){
+
+            if(e.code === 'Escape'){
+              oncloseMovie()
+              console.log("close by Escape key")
+                } 
+            }
+      
+ 
+      document.addEventListener("keydown",callback);
+
+      return function(){
+        document.removeEventListener("keydown",callback);
+      };
+
+    },[oncloseMovie]);
+
+
+
+
+
+  ////////////////////////////////////////////////////////////////
+
   useEffect(function(){
     async function getMovieDetails(){
       setIsLoading(true)
@@ -494,6 +538,22 @@ function SelectedMovie({selectedId,oncloseMovie,onAddWatched,watched}){
     }
     getMovieDetails();//here we call that function
   },[selectedId])
+
+useEffect(
+  function(){
+    if (!title) return; //to avoid the undefined as in the title
+    document.title=`Movie | ${title}`;
+
+    //cleanup function
+    return function(){
+      document.title ="UsePopCorn";
+      console.log(` cleanUp the function of title ${title}`)
+    }
+
+  },[title]
+)
+
+
   return <div className="details">
     {isLoading ? <Loader/>:
     <>
