@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Product from "./pages/Product";
 import Pricing from "./pages/Pricing";
 import Homepage from "./pages/Homepage";
@@ -7,59 +7,37 @@ import AppLayout from "./pages/AppLayout";
 import Login from "./pages/Login";
 import CityList from "./component/CityList";
 import { useEffect, useState } from "react";
-import CountryList from "./component/CountryList"
+import CountryList from "./component/CountryList";
 import City from "./component/City";
 import Form from "./component/Form";
-
-const BASE_URL='http://localhost:9000';
+import { CitiesProvider } from "./contexts/citiesContext";
 
 function App() {
-  const [cities, setCities] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Load data on mount
-  useEffect(() => {
-    async function fetchCities() {
-      // Fetch data here and update cities and isLoading
-    try{
-      setIsLoading(true)
-      const res=await fetch(`${BASE_URL}/cities`);
-      const data=await res.json();
-      setCities(data);
-    }
-    catch{
-      alert("There was an Error loading data...");
-    }
-    finally{
-      setIsLoading(false)
-    }
-    }
-    fetchCities();
-  }, []);
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route index element={<Homepage />} />
-        <Route path="product" element={<Product />} />
-        <Route path="pricing" element={<Pricing />} />
-        <Route path="/login" element={<Login />} />
+    <CitiesProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Homepage />} />
+          <Route path="product" element={<Product />} />
+          <Route path="pricing" element={<Pricing />} />
+          <Route path="/login" element={<Login />} />
 
-        {/* Nested routes */}
-        <Route path="app" element={<AppLayout />}>
-          <Route index element={<CityList  cities={cities} isLoading={isLoading}/> }/>
-          <Route path="cities" element={<CityList cities={cities} isLoading={isLoading} />} />
+          {/* Nested routes */}
+          <Route path="app" element={<AppLayout />}>
+            <Route index element={<Navigate replace to="cities" />} />
+            <Route path="cities" element={<CityList />} />
 
-          <Route path="cities/:id"element={<City/>}/>
+            <Route path="cities/:id" element={<City />} />
 
-          <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading}/>} />
-          <Route path="form" element={<Form/>} />
-        </Route>
+            <Route path="countries" element={<CountryList />} />
+            <Route path="form" element={<Form />} />
+          </Route>
 
-        {/* Catch-all for undefined routes */}
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Catch-all for undefined routes */}
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </CitiesProvider>
   );
 }
 
